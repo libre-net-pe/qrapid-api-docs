@@ -11,6 +11,7 @@ post:
   operationId: createQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   requestBody:
     required: true
     content:
@@ -75,6 +76,7 @@ get:
   operationId: listQrCodes
   security:
     - firebase_jwt: []
+    - api_key: []
   parameters:
     - name: page
       in: query

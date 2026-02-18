@@ -15,6 +15,7 @@ get:
   operationId: getQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '200':
       description: The QR code resource.
@@ -63,6 +64,7 @@ patch:
   operationId: updateQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   requestBody:
     required: true
     content:
@@ -164,6 +166,7 @@ delete:
   operationId: deleteQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '204':
       description: QR code deleted successfully. No response body.

@@ -15,6 +15,7 @@ get:
   operationId: getDynamicQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '200':
       description: The dynamic QR code resource.
@@ -71,6 +72,7 @@ patch:
   operationId: updateDynamicQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   requestBody:
     required: true
     content:
@@ -167,6 +169,7 @@ delete:
   operationId: deleteDynamicQrCode
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '204':
       description: Dynamic QR code deleted successfully. No response body.

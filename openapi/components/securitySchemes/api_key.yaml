@@ -1,0 +1,16 @@
+type: http
+scheme: bearer
+bearerFormat: APIKey
+description: >
+  A long-lived API key issued via the QRapid dashboard. Suitable for
+  server-to-server integrations where using the Firebase SDK is impractical.
+
+  Pass the key in the `Authorization` header:
+
+  ```
+  Authorization: Bearer sk_live_<your-api-key>
+  ```
+
+  Keys are scoped to a single user account. Treat them as secrets — do not
+  expose them in client-side code or public repositories. Rotate compromised
+  keys immediately from the dashboard.

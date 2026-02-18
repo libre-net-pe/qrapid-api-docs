@@ -15,6 +15,7 @@ get:
   operationId: getFolder
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '200':
       description: The folder resource.
@@ -62,6 +63,7 @@ patch:
   operationId: updateFolder
   security:
     - firebase_jwt: []
+    - api_key: []
   requestBody:
     required: true
     content:
@@ -163,6 +165,7 @@ delete:
   operationId: deleteFolder
   security:
     - firebase_jwt: []
+    - api_key: []
   responses:
     '204':
       description: Folder deleted successfully. No response body.

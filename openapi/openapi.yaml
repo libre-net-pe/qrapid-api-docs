@@ -17,13 +17,29 @@ info:
 
     ## Authentication
 
-    All endpoints require a valid **Firebase ID token** sent as a Bearer token:
+    All endpoints accept two authentication methods — use whichever fits your use case:
+
+    ### Firebase ID Token
+
+    For web and mobile clients using the Firebase SDK:
 
     ```
     Authorization: Bearer <firebase-id-token>
     ```
 
-    Tokens expire after 1 hour. Use the Firebase SDK to refresh them.
+    Tokens expire after 1 hour. Refresh them automatically using the Firebase SDK.
+
+    ### API Key
+
+    For server-to-server integrations and CI/CD pipelines where the Firebase SDK
+    is impractical. API keys are long-lived and provisioned via the QRapid dashboard:
+
+    ```
+    Authorization: Bearer sk_live_<your-api-key>
+    ```
+
+    Treat API keys as secrets. Do not expose them in client-side code or public
+    repositories. Rotate compromised keys immediately from the dashboard.
 
     ## Errors
 
@@ -69,3 +85,5 @@ components:
   securitySchemes:
     firebase_jwt:
       $ref: components/securitySchemes/firebase_jwt.yaml
+    api_key:
+      $ref: components/securitySchemes/api_key.yaml

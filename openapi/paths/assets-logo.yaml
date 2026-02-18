@@ -14,6 +14,7 @@ post:
   operationId: uploadLogo
   security:
     - firebase_jwt: []
+    - api_key: []
   requestBody:
     required: true
     content:
