@@ -1,0 +1,205 @@
+parameters:
+  - name: id
+    in: path
+    description: The unique identifier of the dynamic QR code (e.g., `dqr_abc123xyz`).
+    required: true
+    schema:
+      type: string
+    example: dqr_abc123xyz
+
+get:
+  tags:
+    - Dynamic QR Codes
+  summary: Get a dynamic QR code
+  description: Returns a single dynamic QR code resource by its ID, including current scan analytics.
+  operationId: getDynamicQrCode
+  security:
+    - firebase_jwt: []
+  responses:
+    '200':
+      description: The dynamic QR code resource.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/DynamicQrCode.yaml
+          example:
+            id: dqr_abc123xyz
+            destinationUrl: 'https://example.com/menu'
+            shortUrl: 'https://go.qrapid.io/my-menu'
+            slug: my-menu
+            label: Restaurant Menu
+            status: active
+            downloadUrl: 'https://cdn.qrapid.io/dqr/dqr_abc123xyz.png'
+            scanCount: 42
+            lastScannedAt: '2026-02-18T15:30:00Z'
+            expiresAt: null
+            createdAt: '2026-02-18T12:00:00Z'
+            updatedAt: '2026-02-18T12:00:00Z'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '404':
+      description: No dynamic QR code found with the given ID for the authenticated user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No dynamic QR code with ID dqr_abc123xyz exists in your library.
+
+patch:
+  tags:
+    - Dynamic QR Codes
+  summary: Update a dynamic QR code
+  description: |
+    Updates the `destinationUrl` and/or `label` of an existing dynamic QR code.
+    The change takes effect immediately — all subsequent scans of the printed QR
+    code will redirect to the new destination. The slug and short URL are immutable.
+
+    At least one field must be provided in the request body.
+  operationId: updateDynamicQrCode
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/DynamicQrCodeUpdateRequest.yaml
+        examples:
+          update_destination:
+            summary: Change the destination URL
+            value:
+              destinationUrl: 'https://example.com/new-menu'
+          update_label:
+            summary: Rename the QR code
+            value:
+              label: Updated Menu
+          update_both:
+            summary: Change destination and rename
+            value:
+              destinationUrl: 'https://example.com/new-menu'
+              label: Updated Menu
+  responses:
+    '200':
+      description: Dynamic QR code updated successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/DynamicQrCode.yaml
+          example:
+            id: dqr_abc123xyz
+            destinationUrl: 'https://example.com/new-menu'
+            shortUrl: 'https://go.qrapid.io/my-menu'
+            slug: my-menu
+            label: Updated Menu
+            status: active
+            downloadUrl: 'https://cdn.qrapid.io/dqr/dqr_abc123xyz.png'
+            scanCount: 42
+            lastScannedAt: '2026-02-18T15:30:00Z'
+            expiresAt: null
+            createdAt: '2026-02-18T12:00:00Z'
+            updatedAt: '2026-02-18T16:00:00Z'
+    '400':
+      description: Invalid request body (e.g., malformed URL, empty body).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-destination-url'
+            title: Invalid destination URL
+            status: 400
+            detail: 'The `destinationUrl` must be a valid absolute URL (http or https).'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this dynamic QR code.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to update this dynamic QR code.
+    '404':
+      description: No dynamic QR code found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No dynamic QR code with ID dqr_abc123xyz exists in your library.
+
+delete:
+  tags:
+    - Dynamic QR Codes
+  summary: Delete a dynamic QR code
+  description: >
+    Permanently deletes a dynamic QR code and deactivates its short URL. Any
+    subsequent scans of the printed QR code will result in a 404 from the redirect
+    service. The CDN asset is also removed.
+  operationId: deleteDynamicQrCode
+  security:
+    - firebase_jwt: []
+  responses:
+    '204':
+      description: Dynamic QR code deleted successfully. No response body.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this dynamic QR code.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to delete this dynamic QR code.
+    '404':
+      description: No dynamic QR code found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No dynamic QR code with ID dqr_abc123xyz exists in your library.

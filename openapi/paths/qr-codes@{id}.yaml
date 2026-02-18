@@ -1,0 +1,202 @@
+parameters:
+  - name: id
+    in: path
+    description: The unique identifier of the QR code (e.g., `qr_abc123xyz`).
+    required: true
+    schema:
+      type: string
+    example: qr_abc123xyz
+
+get:
+  tags:
+    - QR Codes
+  summary: Get a QR code
+  description: Returns a single QR code resource by its ID. Only the owning user can retrieve their QR codes.
+  operationId: getQrCode
+  security:
+    - firebase_jwt: []
+  responses:
+    '200':
+      description: The QR code resource.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/QrCode.yaml
+          example:
+            id: qr_abc123xyz
+            type: url
+            content: 'https://example.com/campaign'
+            label: Summer Campaign QR
+            downloadUrl: 'https://cdn.qrapid.io/qr/qr_abc123xyz.png'
+            createdAt: '2026-02-18T12:00:00Z'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '404':
+      description: No QR code found with the given ID for the authenticated user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No QR code with ID qr_abc123xyz exists in your library.
+
+patch:
+  tags:
+    - QR Codes
+  summary: Update a static QR code
+  description: |
+    Updates the `label` and/or `folderId` of a static QR code. At least one field
+    must be provided. Pass `folderId: null` to remove the code from its current
+    folder (making it unfiled).
+  operationId: updateQrCode
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          minProperties: 1
+          properties:
+            label:
+              description: New human-readable name for this QR code (max 255 characters).
+              type: string
+              maxLength: 255
+              example: Updated Campaign QR
+            folderId:
+              description: >
+                ID of the folder to move this QR code into. Pass `null` to unfile the
+                code (remove it from its current folder).
+              type: string
+              nullable: true
+              example: fol_abc123
+        examples:
+          move_to_folder:
+            summary: Move to a folder
+            value:
+              folderId: fol_abc123
+          rename:
+            summary: Rename
+            value:
+              label: Updated Campaign QR
+          unfile:
+            summary: Remove from folder
+            value:
+              folderId: null
+  responses:
+    '200':
+      description: QR code updated successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/QrCode.yaml
+          example:
+            id: qr_abc123xyz
+            type: url
+            content: 'https://example.com/campaign'
+            label: Updated Campaign QR
+            folderId: fol_abc123
+            downloadUrl: 'https://cdn.qrapid.io/qr/qr_abc123xyz.png'
+            createdAt: '2026-02-18T12:00:00Z'
+    '400':
+      description: Invalid request body (e.g., empty body, invalid folderId).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-folder'
+            title: Folder not found
+            status: 400
+            detail: No folder with ID fol_abc123 exists in your account.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this QR code.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to update this QR code.
+    '404':
+      description: No QR code found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No QR code with ID qr_abc123xyz exists in your library.
+
+delete:
+  tags:
+    - QR Codes
+  summary: Delete a QR code
+  description: Permanently deletes a QR code from the user's library. The CDN asset is also removed.
+  operationId: deleteQrCode
+  security:
+    - firebase_jwt: []
+  responses:
+    '204':
+      description: QR code deleted successfully. No response body.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this QR code.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to delete this QR code.
+    '404':
+      description: No QR code found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No QR code with ID qr_abc123xyz exists in your library.

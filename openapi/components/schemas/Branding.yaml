@@ -1,0 +1,30 @@
+description: >
+  Optional branding configuration applied to a QR code at generation time.
+  Branding is fixed after creation — to change branding, generate a new QR code.
+type: object
+properties:
+  foregroundColor:
+    description: >
+      CSS hex color for the QR module (dark) pixels. Must provide sufficient
+      contrast against `backgroundColor` (minimum ratio 3:1 per WCAG).
+      Defaults to `#000000` if omitted.
+    type: string
+    pattern: '^#[0-9A-Fa-f]{6}$'
+    default: '#000000'
+    example: '#1a237e'
+  backgroundColor:
+    description: >
+      CSS hex color for the QR background (light) pixels. Must provide sufficient
+      contrast against `foregroundColor` (minimum ratio 3:1 per WCAG).
+      Defaults to `#FFFFFF` if omitted.
+    type: string
+    pattern: '^#[0-9A-Fa-f]{6}$'
+    default: '#FFFFFF'
+    example: '#FFFFFF'
+  logoId:
+    description: >
+      ID of a previously uploaded logo (from `POST /assets/logo`). The logo is
+      placed at the center of the QR code and automatically scaled to occupy at
+      most 20% of the QR area. Omit to generate a QR code without a center logo.
+    type: string
+    example: logo_xyz789

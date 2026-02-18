@@ -1,0 +1,35 @@
+description: >
+  RFC 7807 Problem Details object. Returned for all error responses with
+  content-type `application/problem+json`.
+type: object
+required:
+  - type
+  - title
+  - status
+properties:
+  type:
+    description: >
+      A URI reference that identifies the problem type. When dereferenced, it
+      provides human-readable documentation for the problem.
+    type: string
+    format: uri
+    example: 'https://qrapid.io/errors/invalid-content'
+  title:
+    description: A short, human-readable summary of the problem type.
+    type: string
+    example: Invalid content value
+  status:
+    description: The HTTP status code for this occurrence of the problem.
+    type: integer
+    example: 400
+  detail:
+    description: A human-readable explanation specific to this occurrence of the problem.
+    type: string
+    example: 'The `content` field must be a valid absolute URL when `type` is "url".'
+  instance:
+    description: >
+      A URI reference that identifies the specific occurrence of the problem.
+      May be used for tracing or support purposes.
+    type: string
+    format: uri
+    example: 'https://qrapid.io/logs/req_xyz789'

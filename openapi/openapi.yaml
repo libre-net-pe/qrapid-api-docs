@@ -1,84 +1,71 @@
 openapi: 3.0.2
 info:
-  version: 1.0.0
-  title: Example.com
-  termsOfService: 'https://example.com/terms/'
+  version: 0.1.0
+  title: QRapid API
+  termsOfService: 'https://qrapid.io/terms/'
   contact:
-    email: contact@example.com
-    url: 'http://example.com/contact'
+    name: QRapid Support
+    email: api@qrapid.io
+    url: 'https://qrapid.io/support'
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  x-logo:
-    url: 'https://redocly.github.io/openapi-template/logo.png'
-  description: >
-    This is an **example** API to demonstrate features of OpenAPI specification
+    name: Proprietary
+  description: |
+    # QRapid API
 
-    # Introduction
+    QRapid lets you generate, manage, and track static and dynamic QR codes
+    programmatically. This reference documents the REST API.
 
-    This API definition is intended to to be a good starting point for
-    describing your API in 
+    ## Authentication
 
-    [OpenAPI/Swagger
-    format](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md).
+    All endpoints require a valid **Firebase ID token** sent as a Bearer token:
 
-    It also demonstrates features of
-    [create-openapi-repo](https://github.com/Redocly/create-openapi-repo) tool
-    and 
+    ```
+    Authorization: Bearer <firebase-id-token>
+    ```
 
-    [Redoc](https://github.com/Redocly/Redoc) documentation engine. So beyond
-    the standard OpenAPI syntax we use a few 
+    Tokens expire after 1 hour. Use the Firebase SDK to refresh them.
 
-    [vendor
-    extensions](https://github.com/Redocly/Redoc/blob/master/docs/redoc-vendor-extensions.md).
+    ## Errors
 
+    Error responses use [RFC 7807 Problem Details](https://www.rfc-editor.org/rfc/rfc7807)
+    with `Content-Type: application/problem+json`.
 
-    # OpenAPI Specification
-
-    The goal of The OpenAPI Specification is to define a standard,
-    language-agnostic interface to REST APIs which
-
-    allows both humans and computers to discover and understand the capabilities
-    of the service without access to source
-
-    code, documentation, or through network traffic inspection. When properly
-    defined via OpenAPI, a consumer can 
-
-    understand and interact with the remote service with a minimal amount of
-    implementation logic. Similar to what
-
-    interfaces have done for lower-level programming, OpenAPI removes the
-    guesswork in calling the service.
-externalDocs:
-  description: Find out how to create a GitHub repo for your OpenAPI definition.
-  url: 'https://github.com/Rebilly/generator-openapi-repo'
-tags:
-  - name: Echo
-    description: Example echo operations
-  - name: User
-    description: Operations about user
 servers:
-  - url: 'http://example.com/api/v1'
-  - url: 'https://example.com/api/v1'
+  - url: 'https://api.qrapid.io/v1'
+    description: Production
+  - url: 'http://localhost:8080/v1'
+    description: Local development
+
+tags:
+  - name: QR Codes
+    description: Generate and manage static QR codes (URL and plain text).
+  - name: Dynamic QR Codes
+    description: >
+      Create and manage dynamic QR codes. The QR image encodes a QRapid short URL
+      that redirects to an editable destination — update the destination at any time
+      without reprinting.
+  - name: Assets
+    description: Upload reusable assets (logos) for QR code branding.
+  - name: Folders
+    description: Create and manage project folders for organising QR codes.
+
 paths:
-  '/users/{username}':
-    $ref: 'paths/users@{username}.yaml'
-  /echo:
-    $ref: paths/echo.yaml
+  /qr-codes:
+    $ref: paths/qr-codes.yaml
+  '/qr-codes/{id}':
+    $ref: 'paths/qr-codes@{id}.yaml'
+  /dynamic-qr-codes:
+    $ref: paths/dynamic-qr-codes.yaml
+  '/dynamic-qr-codes/{id}':
+    $ref: 'paths/dynamic-qr-codes@{id}.yaml'
+  /assets/logo:
+    $ref: paths/assets-logo.yaml
+  /folders:
+    $ref: paths/folders.yaml
+  '/folders/{id}':
+    $ref: 'paths/folders@{id}.yaml'
+
 components:
   securitySchemes:
-    main_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: 'http://example.com/api/oauth/dialog'
-          scopes:
-            'read:users': read users info
-            'write:users': modify or remove users
-    api_key:
-      type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
-      type: http
-      scheme: basic
+    firebase_jwt:
+      $ref: components/securitySchemes/firebase_jwt.yaml

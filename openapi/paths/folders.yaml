@@ -1,0 +1,109 @@
+post:
+  tags:
+    - Folders
+  summary: Create a folder
+  description: Creates a new project folder for organising QR codes. Folder names must be unique per user.
+  operationId: createFolder
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/FolderCreateRequest.yaml
+        example:
+          name: Summer Campaign
+          description: Q3 print materials for the summer campaign
+  responses:
+    '201':
+      description: Folder created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Folder.yaml
+          example:
+            id: fol_abc123
+            name: Summer Campaign
+            description: Q3 print materials for the summer campaign
+            codeCount: 0
+            createdAt: '2026-02-18T12:00:00Z'
+            updatedAt: '2026-02-18T12:00:00Z'
+    '400':
+      description: Invalid request body (e.g., missing name, name too long).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-folder-name'
+            title: Invalid folder name
+            status: 400
+            detail: The `name` field is required and must not exceed 100 characters.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '409':
+      description: A folder with the same name already exists for this user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/folder-name-conflict'
+            title: Folder name already in use
+            status: 409
+            detail: You already have a folder named "Summer Campaign". Choose a different name.
+
+get:
+  tags:
+    - Folders
+  summary: List folders
+  description: Returns a paginated list of all folders owned by the authenticated user, ordered by `name` ascending.
+  operationId: listFolders
+  security:
+    - firebase_jwt: []
+  parameters:
+    - name: page
+      in: query
+      description: Page number to retrieve (1-based).
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 1
+    - name: limit
+      in: query
+      description: Number of items per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 20
+  responses:
+    '200':
+      description: Paginated list of folders.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/PaginatedFolders.yaml
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.

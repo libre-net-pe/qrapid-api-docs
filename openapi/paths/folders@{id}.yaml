@@ -1,0 +1,201 @@
+parameters:
+  - name: id
+    in: path
+    description: The unique identifier of the folder (e.g., `fol_abc123`).
+    required: true
+    schema:
+      type: string
+    example: fol_abc123
+
+get:
+  tags:
+    - Folders
+  summary: Get a folder
+  description: Returns a single folder resource by its ID, including the current `codeCount`.
+  operationId: getFolder
+  security:
+    - firebase_jwt: []
+  responses:
+    '200':
+      description: The folder resource.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Folder.yaml
+          example:
+            id: fol_abc123
+            name: Summer Campaign
+            description: Q3 print materials for the summer campaign
+            codeCount: 12
+            createdAt: '2026-02-18T12:00:00Z'
+            updatedAt: '2026-02-18T12:00:00Z'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '404':
+      description: No folder found with the given ID for the authenticated user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No folder with ID fol_abc123 exists in your account.
+
+patch:
+  tags:
+    - Folders
+  summary: Update a folder
+  description: |
+    Updates the `name` and/or `description` of a folder. At least one field must be
+    provided. Folder names must remain unique per user; returns 409 on conflict.
+  operationId: updateFolder
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/FolderUpdateRequest.yaml
+        examples:
+          rename:
+            summary: Rename the folder
+            value:
+              name: Summer Campaign 2026
+          update_description:
+            summary: Update description only
+            value:
+              description: Updated Q3 materials
+          rename_and_describe:
+            summary: Rename and update description
+            value:
+              name: Summer Campaign 2026
+              description: Updated Q3 materials
+  responses:
+    '200':
+      description: Folder updated successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Folder.yaml
+          example:
+            id: fol_abc123
+            name: Summer Campaign 2026
+            description: Updated Q3 materials
+            codeCount: 12
+            createdAt: '2026-02-18T12:00:00Z'
+            updatedAt: '2026-02-18T16:00:00Z'
+    '400':
+      description: Invalid request body (e.g., empty body, name too long).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-folder-name'
+            title: Invalid folder name
+            status: 400
+            detail: The `name` field must not exceed 100 characters.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this folder.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to update this folder.
+    '404':
+      description: No folder found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No folder with ID fol_abc123 exists in your account.
+    '409':
+      description: A folder with the new name already exists for this user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/folder-name-conflict'
+            title: Folder name already in use
+            status: 409
+            detail: You already have a folder named "Summer Campaign 2026". Choose a different name.
+
+delete:
+  tags:
+    - Folders
+  summary: Delete a folder
+  description: >
+    Permanently deletes a folder. QR codes inside the folder are **not** deleted —
+    they become unfiled (`folderId` is set to `null`). The `codeCount` of the deleted
+    folder is not transferred anywhere.
+  operationId: deleteFolder
+  security:
+    - firebase_jwt: []
+  responses:
+    '204':
+      description: Folder deleted successfully. No response body.
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+    '403':
+      description: The authenticated user does not own this folder.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/forbidden'
+            title: Forbidden
+            status: 403
+            detail: You do not have permission to delete this folder.
+    '404':
+      description: No folder found with the given ID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not Found
+            status: 404
+            detail: No folder with ID fol_abc123 exists in your account.

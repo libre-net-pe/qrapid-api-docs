@@ -1,0 +1,73 @@
+post:
+  tags:
+    - Assets
+  summary: Upload a logo
+  description: |
+    Uploads an image file to use as a center logo in QR codes. The returned `logoId`
+    can be passed as `branding.logoId` when creating a static or dynamic QR code.
+
+    **Accepted formats:** PNG, JPG, SVG
+    **Maximum file size:** 2 MB
+
+    Logos are scoped to the authenticated user and can be reused across multiple QR codes.
+    The server scales the logo automatically to occupy at most 20% of the QR code area.
+  operationId: uploadLogo
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          required:
+            - file
+          properties:
+            file:
+              description: 'The logo image file to upload. Accepted formats: PNG, JPG, SVG. Maximum size: 2 MB.'
+              type: string
+              format: binary
+  responses:
+    '201':
+      description: Logo uploaded successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Logo.yaml
+          example:
+            logoId: logo_xyz789
+            filename: company-logo.png
+            previewUrl: 'https://cdn.qrapid.io/logos/logo_xyz789.png'
+            createdAt: '2026-02-18T12:00:00Z'
+    '400':
+      description: Invalid file (unsupported format, file too large, or no file provided).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          examples:
+            unsupported_format:
+              summary: Unsupported file format
+              value:
+                type: 'https://qrapid.io/errors/unsupported-file-format'
+                title: Unsupported file format
+                status: 400
+                detail: 'Only PNG, JPG, and SVG files are accepted. Received: image/gif.'
+            file_too_large:
+              summary: File exceeds size limit
+              value:
+                type: 'https://qrapid.io/errors/file-too-large'
+                title: File too large
+                status: 400
+                detail: 'The uploaded file is 3.2 MB, which exceeds the 2 MB limit.'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.

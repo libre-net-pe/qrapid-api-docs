@@ -1,0 +1,122 @@
+post:
+  tags:
+    - QR Codes
+  summary: Generate a static QR code
+  description: |
+    Generates a static QR code (URL or plain text) and saves it to the
+    authenticated user's library. The response includes a signed CDN URL
+    to download the 1024×1024 PNG image.
+
+    **Processing time:** < 500ms p95.
+  operationId: createQrCode
+  security:
+    - firebase_jwt: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/QrCodeCreateRequest.yaml
+        examples:
+          url:
+            summary: Encode a URL
+            value:
+              type: url
+              content: 'https://example.com/campaign'
+              label: Summer Campaign QR
+          text:
+            summary: Encode plain text
+            value:
+              type: text
+              content: 'Hello from QRapid!'
+              label: Greeting card
+  responses:
+    '201':
+      description: QR code generated and saved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/QrCode.yaml
+          example:
+            id: qr_abc123xyz
+            type: url
+            content: 'https://example.com/campaign'
+            label: Summer Campaign QR
+            downloadUrl: 'https://cdn.qrapid.io/qr/qr_abc123xyz.png'
+            createdAt: '2026-02-18T12:00:00Z'
+    '400':
+      description: Invalid request body (e.g., non-absolute URL, content too long).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-content'
+            title: Invalid content value
+            status: 400
+            detail: 'The `content` field must be a valid absolute URL when `type` is "url".'
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.
+
+get:
+  tags:
+    - QR Codes
+  summary: List QR codes
+  description: Returns a paginated list of all static QR codes saved in the authenticated user's library, ordered by `createdAt` descending.
+  operationId: listQrCodes
+  security:
+    - firebase_jwt: []
+  parameters:
+    - name: page
+      in: query
+      description: Page number to retrieve (1-based).
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 1
+    - name: limit
+      in: query
+      description: Number of items per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 20
+    - name: folderId
+      in: query
+      description: >
+        Filter by folder. Pass a folder ID to list only codes in that folder.
+        Pass the special value `unfiled` to list codes that are not in any folder.
+        Omit to return all codes regardless of folder.
+      schema:
+        type: string
+      example: fol_abc123
+  responses:
+    '200':
+      description: Paginated list of QR codes.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/PaginatedQrCodes.yaml
+    '401':
+      description: Missing or invalid Firebase JWT.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token is required.

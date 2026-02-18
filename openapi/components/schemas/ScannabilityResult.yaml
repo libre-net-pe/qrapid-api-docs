@@ -1,0 +1,46 @@
+description: >
+  Server-computed scannability assessment returned on every QR code generation response.
+  A `score` of 100 means no issues detected. Scores below 70 indicate the code may
+  fail to scan reliably in poor lighting or at small print sizes.
+type: object
+required:
+  - score
+  - warnings
+properties:
+  score:
+    description: >
+      Scannability score from 0 (likely unscannable) to 100 (optimal).
+      Computed from contrast ratio, quiet zone adequacy, and logo coverage.
+    type: integer
+    minimum: 0
+    maximum: 100
+    example: 85
+  warnings:
+    description: >
+      List of scannability issues detected. Empty array when the code passes all checks.
+    type: array
+    items:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: >
+            Machine-readable warning code. Possible values:
+            `LOW_CONTRAST` — foreground/background contrast ratio is below 3:1;
+            `QUIET_ZONE_VIOLATION` — the quiet zone around the QR code is too small;
+            `LOGO_TOO_LARGE` — logo was scaled down to fit within the 20% area limit.
+          type: string
+          enum:
+            - LOW_CONTRAST
+            - QUIET_ZONE_VIOLATION
+            - LOGO_TOO_LARGE
+          example: LOW_CONTRAST
+        message:
+          description: Human-readable explanation of the warning.
+          type: string
+          example: 'Contrast ratio between foreground (#6d6d6d) and background (#FFFFFF) is 2.8:1, below the recommended minimum of 3:1. Scanning may fail in poor lighting.'
+    example:
+      - code: LOW_CONTRAST
+        message: 'Contrast ratio is 2.8:1, below the recommended minimum of 3:1.'

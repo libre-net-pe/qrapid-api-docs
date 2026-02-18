@@ -1,0 +1,37 @@
+description: Request body for creating a new dynamic QR code.
+type: object
+required:
+  - destinationUrl
+properties:
+  destinationUrl:
+    description: The initial redirect target. Must be a valid absolute URL (http or https).
+    type: string
+    format: uri
+    example: 'https://example.com/menu'
+  slug:
+    description: >
+      Optional custom path component for the short URL (e.g., `my-menu` produces
+      `go.qrapid.io/my-menu`). If omitted, the server generates a random 8-character
+      alphanumeric slug. Must be 3–64 characters, lowercase alphanumeric and hyphens only.
+      Returns 409 if already taken.
+    type: string
+    minLength: 3
+    maxLength: 64
+    pattern: '^[a-z0-9-]+$'
+    example: my-menu
+  label:
+    description: Optional human-readable name for this QR code (max 255 characters).
+    type: string
+    maxLength: 255
+    example: Restaurant Menu
+  folderId:
+    description: >
+      Optional ID of a folder to place this QR code in at creation time. The folder
+      must already exist and be owned by the authenticated user. Omit to leave the
+      code unfiled.
+    type: string
+    example: fol_abc123
+  branding:
+    description: Optional branding customization. Omit to generate a standard black-on-white QR code.
+    allOf:
+      - $ref: ./Branding.yaml

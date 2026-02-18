@@ -1,0 +1,36 @@
+description: Request body for generating and saving a new static QR code.
+type: object
+required:
+  - type
+  - content
+properties:
+  type:
+    description: The kind of data to encode.
+    type: string
+    enum:
+      - url
+      - text
+    example: url
+  content:
+    description: >
+      The value to encode. When `type` is `url`, must be a valid absolute URL
+      (http or https). When `type` is `text`, any non-empty string up to 2953
+      characters (QR capacity limit for alphanumeric at error-correction level M).
+    type: string
+    example: 'https://example.com/campaign'
+  label:
+    description: Optional human-readable name for this QR code (max 255 characters).
+    type: string
+    maxLength: 255
+    example: Summer Campaign QR
+  folderId:
+    description: >
+      Optional ID of a folder to place this QR code in at creation time. The folder
+      must already exist and be owned by the authenticated user. Omit to leave the
+      code unfiled.
+    type: string
+    example: fol_abc123
+  branding:
+    description: Optional branding customization. Omit to generate a standard black-on-white QR code.
+    allOf:
+      - $ref: ./Branding.yaml

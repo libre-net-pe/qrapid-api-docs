@@ -1,0 +1,101 @@
+description: >
+  A dynamic QR code resource. The QR image encodes a QRapid short URL
+  (`go.qrapid.io/<slug>`) that redirects to the editable `destinationUrl`.
+  The printed QR code never needs to be regenerated — only the destination changes.
+type: object
+required:
+  - id
+  - destinationUrl
+  - shortUrl
+  - slug
+  - status
+  - downloadUrl
+  - scanCount
+  - createdAt
+  - updatedAt
+properties:
+  id:
+    description: Unique identifier for the dynamic QR code, prefixed with `dqr_`.
+    type: string
+    example: dqr_abc123xyz
+  destinationUrl:
+    description: The current redirect target URL. Can be updated via PATCH without reprinting the QR code.
+    type: string
+    format: uri
+    example: 'https://example.com/menu'
+  shortUrl:
+    description: The QRapid short URL encoded in the QR image. Read-only; set at creation.
+    type: string
+    format: uri
+    example: 'https://go.qrapid.io/my-menu'
+  slug:
+    description: >
+      The path component of the short URL (e.g., `my-menu` in `go.qrapid.io/my-menu`).
+      Read-only after creation. Must be unique across all users.
+    type: string
+    example: my-menu
+  label:
+    description: Optional human-readable name assigned by the user.
+    type: string
+    example: Restaurant Menu
+  status:
+    description: >
+      Lifecycle status of the dynamic QR code. `active` codes redirect normally.
+      `expired` codes redirect to a QRapid expiry notice page.
+    type: string
+    enum:
+      - active
+      - expired
+    example: active
+  downloadUrl:
+    description: >
+      Signed CDN URL to download the generated QR code image (1024×1024 PNG).
+      Valid for 24 hours; re-fetch the resource to obtain a fresh URL.
+    type: string
+    format: uri
+    example: 'https://cdn.qrapid.io/dqr/dqr_abc123xyz.png'
+  scanCount:
+    description: Total number of times the short URL has been scanned (redirected). Starts at 0.
+    type: integer
+    minimum: 0
+    example: 42
+  lastScannedAt:
+    description: ISO 8601 timestamp of the most recent scan. Null if the code has never been scanned.
+    type: string
+    format: date-time
+    nullable: true
+    example: '2026-02-18T15:30:00Z'
+  expiresAt:
+    description: >
+      ISO 8601 timestamp when this dynamic code expires. Null means the code never expires.
+      Free-tier accounts may have active code limits enforced separately.
+    type: string
+    format: date-time
+    nullable: true
+    example: null
+  folderId:
+    description: >
+      ID of the folder this dynamic QR code belongs to. Null means the code is unfiled.
+      Use `PATCH /dynamic-qr-codes/{id}` to move a code between folders.
+    type: string
+    nullable: true
+    example: fol_abc123
+  branding:
+    description: Branding configuration applied at generation time. Null if the QR code was generated without custom branding.
+    nullable: true
+    allOf:
+      - $ref: ./Branding.yaml
+  scannability:
+    description: Scannability assessment computed at generation time.
+    allOf:
+      - $ref: ./ScannabilityResult.yaml
+  createdAt:
+    description: ISO 8601 timestamp of when the dynamic QR code was created.
+    type: string
+    format: date-time
+    example: '2026-02-18T12:00:00Z'
+  updatedAt:
+    description: ISO 8601 timestamp of the most recent update to this resource.
+    type: string
+    format: date-time
+    example: '2026-02-18T12:00:00Z'

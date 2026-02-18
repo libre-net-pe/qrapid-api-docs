@@ -1,0 +1,7 @@
+type: http
+scheme: bearer
+bearerFormat: JWT
+description: >
+  Firebase ID token obtained via Firebase Authentication. Pass the token in the
+  `Authorization` header as `Bearer <token>`. Tokens expire after 1 hour; clients
+  must refresh using the Firebase SDK.

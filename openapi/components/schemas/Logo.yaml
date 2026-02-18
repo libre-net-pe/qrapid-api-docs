@@ -1,0 +1,26 @@
+description: A user-uploaded logo asset that can be embedded in QR codes as a center image.
+type: object
+required:
+  - logoId
+  - filename
+  - previewUrl
+  - createdAt
+properties:
+  logoId:
+    description: Unique identifier for the logo, prefixed with `logo_`. Pass this as `branding.logoId` when creating a QR code.
+    type: string
+    example: logo_xyz789
+  filename:
+    description: Original filename of the uploaded image.
+    type: string
+    example: company-logo.png
+  previewUrl:
+    description: CDN URL to preview the uploaded logo image.
+    type: string
+    format: uri
+    example: 'https://cdn.qrapid.io/logos/logo_xyz789.png'
+  createdAt:
+    description: ISO 8601 timestamp of when the logo was uploaded.
+    type: string
+    format: date-time
+    example: '2026-02-18T12:00:00Z'

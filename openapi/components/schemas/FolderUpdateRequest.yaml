@@ -1,0 +1,17 @@
+description: >
+  Request body for updating a folder. All fields are optional but at least one
+  must be provided.
+type: object
+minProperties: 1
+properties:
+  name:
+    description: New name for the folder. Must be unique per user (max 100 characters). Returns 409 if already taken.
+    type: string
+    maxLength: 100
+    example: Summer Campaign 2026
+  description:
+    description: New description for the folder (max 255 characters). Pass null to clear an existing description.
+    type: string
+    maxLength: 255
+    nullable: true
+    example: Updated Q3 print materials
