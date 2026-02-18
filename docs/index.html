@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>API Reference | ReDoc</title>
-    <!-- needed for adaptive design -->
+    <title>QRapid API Reference</title>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="favicon.png">
-
-    <!--
-    ReDoc uses font options from the parent element
-    So override default browser styles
-    -->
+    <link rel="icon" type="image/png" href="https://redocly.github.io/redoc/favicon.png">
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
+      body { margin: 0; padding: 0; }
     </style>
-    {{{redocHead}}}
   </head>
   <body>
-    {{{redocHTML}}}
+    <redoc spec-url="../openapi/openapi.yaml"
+           theme='{"colors":{"primary":{"main":"#32329f"}}}'
+           expand-responses="200,201"
+           required-props-first="true"
+           hide-download-button="false">
+    </redoc>
+    <script src="https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js"></script>
   </body>
 </html>

@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "start": "openapi preview-docs",
-    "build": "openapi bundle -o dist",
-    "test": "openapi lint"
+    "build": "openapi bundle openapi/openapi.yaml --output dist/openapi.json --ext json",
+    "test": "npx openapi validate openapi/openapi.yaml"
   }
 }
