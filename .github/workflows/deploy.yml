@@ -10,6 +10,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  packages: write
 
 concurrency:
   group: pages
@@ -78,3 +79,34 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  sdk:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Generate TypeScript types
+        run: npm run sdk:generate
+
+      - name: Install SDK dependencies
+        run: npm --prefix sdk ci
+
+      - name: Build SDK
+        run: npm --prefix sdk run build
+
+      - name: Publish to GitHub Packages
+        run: npm --prefix sdk publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,10 +4,14 @@
   "dependencies": {
     "@redocly/openapi-cli": "^0.12.16"
   },
+  "devDependencies": {
+    "openapi-typescript": "^7"
+  },
   "private": true,
   "scripts": {
     "start": "openapi preview-docs",
     "build": "openapi bundle openapi/openapi.yaml --output dist/openapi.json --ext json",
-    "test": "npx openapi validate openapi/openapi.yaml"
+    "test": "npx openapi validate openapi/openapi.yaml",
+    "sdk:generate": "npx openapi-typescript openapi/openapi.yaml -o sdk/src/schema.d.ts"
   }
 }

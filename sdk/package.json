@@ -1,0 +1,23 @@
+{
+  "name": "@libre-net-pe/qrapid-sdk",
+  "version": "0.1.0",
+  "description": "Type-safe TypeScript client for the QRapid API",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13"
+  },
+  "peerDependencies": {
+    "typescript": ">=5"
+  }
+}

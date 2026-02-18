@@ -82,6 +82,7 @@ properties:
     example: fol_abc123
   branding:
     description: Branding configuration applied at generation time. Null if the QR code was generated without custom branding.
+    type: object
     nullable: true
     allOf:
       - $ref: ./Branding.yaml
