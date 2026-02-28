@@ -1,0 +1,34 @@
+description: A QRapid user account profile.
+type: object
+required:
+  - id
+  - email
+  - displayName
+  - plan
+  - createdAt
+properties:
+  id:
+    description: Unique identifier for the user, prefixed with `usr_`.
+    type: string
+    example: usr_abc123xyz
+  email:
+    description: Email address from the Firebase identity token. Read-only.
+    type: string
+    format: email
+    example: jane@example.com
+  displayName:
+    description: Human-readable display name. Seeded from the Firebase token on first login; editable via `PATCH /me`.
+    type: string
+    example: Jane Doe
+  plan:
+    description: Subscription plan. Set server-side; not editable by the user.
+    type: string
+    enum:
+      - free
+      - pro
+    example: free
+  createdAt:
+    description: ISO 8601 timestamp of when the account was provisioned.
+    type: string
+    format: date-time
+    example: '2026-02-28T12:00:00Z'

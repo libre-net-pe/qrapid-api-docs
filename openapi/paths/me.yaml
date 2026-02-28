@@ -1,0 +1,96 @@
+get:
+  tags:
+    - Account
+  summary: Get current user profile
+  description: |
+    Returns the profile of the authenticated user. If no account record exists yet
+    (first call after Firebase sign-up), one is automatically provisioned using the
+    identity claims from the JWT before the response is returned. The caller always
+    receives a complete user object — there is no explicit registration step.
+  operationId: getMe
+  security:
+    - firebase_jwt: []
+    - api_key: []
+  responses:
+    '200':
+      description: The authenticated user's profile.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/User.yaml
+          example:
+            id: usr_abc123xyz
+            email: jane@example.com
+            displayName: Jane Doe
+            plan: free
+            createdAt: '2026-02-28T12:00:00Z'
+    '401':
+      description: Missing or invalid authentication credential.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token or API key is required.
+
+patch:
+  tags:
+    - Account
+  summary: Update current user profile
+  description: |
+    Updates editable fields of the authenticated user's profile. All fields are
+    optional; at least one must be provided. Fields omitted from the request body
+    are left unchanged.
+  operationId: updateMe
+  security:
+    - firebase_jwt: []
+    - api_key: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/UserUpdateRequest.yaml
+        examples:
+          update_display_name:
+            summary: Change display name
+            value:
+              displayName: Jane Smith
+  responses:
+    '200':
+      description: Profile updated successfully.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/User.yaml
+          example:
+            id: usr_abc123xyz
+            email: jane@example.com
+            displayName: Jane Smith
+            plan: free
+            createdAt: '2026-02-28T12:00:00Z'
+    '400':
+      description: Invalid request body (e.g., empty body, displayName too long).
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/invalid-request'
+            title: Invalid request
+            status: 400
+            detail: The `displayName` field must not exceed 100 characters.
+    '401':
+      description: Missing or invalid authentication credential.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/unauthorized'
+            title: Unauthorized
+            status: 401
+            detail: A valid Firebase ID token or API key is required.

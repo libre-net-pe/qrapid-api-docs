@@ -1,0 +1,11 @@
+description: |
+  Request body for `PATCH /me`. All fields are optional; at least one must be provided.
+type: object
+minProperties: 1
+properties:
+  displayName:
+    description: New display name for the user. Must be between 1 and 100 characters.
+    type: string
+    minLength: 1
+    maxLength: 100
+    example: Jane Smith
