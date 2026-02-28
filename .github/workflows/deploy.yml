@@ -107,6 +107,7 @@ jobs:
         run: npm --prefix sdk run build
 
       - name: Publish to GitHub Packages
-        run: npm --prefix sdk publish
+        run: npm publish
+        working-directory: sdk
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
