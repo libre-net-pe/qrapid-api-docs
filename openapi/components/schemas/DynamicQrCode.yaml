@@ -75,6 +75,7 @@ properties:
     example: null
   folder:
     description: "The folder this code belongs to. Null means the code is unfiled."
+    type: object
     nullable: true
     allOf:
       - $ref: ./FolderSummary.yaml
