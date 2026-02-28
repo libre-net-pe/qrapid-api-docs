@@ -73,13 +73,11 @@ properties:
     format: date-time
     nullable: true
     example: null
-  folderId:
-    description: >
-      ID of the folder this dynamic QR code belongs to. Null means the code is unfiled.
-      Use `PATCH /dynamic-qr-codes/{id}` to move a code between folders.
-    type: string
+  folder:
+    description: "The folder this code belongs to. Null means the code is unfiled."
     nullable: true
-    example: fol_abc123
+    allOf:
+      - $ref: ./FolderSummary.yaml
   branding:
     description: Branding configuration applied at generation time. Null if the QR code was generated without custom branding.
     type: object
