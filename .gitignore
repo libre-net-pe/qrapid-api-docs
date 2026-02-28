@@ -3,6 +3,6 @@ dist
 node_modules
 
 # SDK — generated during CI, not committed
-sdk/src/schema.d.ts
+sdk/src/schema.ts
 sdk/dist/
 sdk/node_modules/

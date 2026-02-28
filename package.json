@@ -12,6 +12,6 @@
     "start": "openapi preview-docs",
     "build": "openapi bundle openapi/openapi.yaml --output dist/openapi.json --ext json",
     "test": "npx openapi validate openapi/openapi.yaml",
-    "sdk:generate": "npx openapi-typescript openapi/openapi.yaml -o sdk/src/schema.d.ts"
+    "sdk:generate": "npx openapi-typescript openapi/openapi.yaml -o sdk/src/schema.ts"
   }
 }
