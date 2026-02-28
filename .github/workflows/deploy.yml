@@ -96,6 +96,7 @@ jobs:
           node-version: 20
           cache: npm
           registry-url: https://npm.pkg.github.com
+          scope: '@libre-net-pe'
 
       - name: Install root dependencies
         run: npm ci
