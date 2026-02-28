@@ -3,7 +3,7 @@ apis:
   main:
     root: openapi/openapi.yaml
     x-openapi-ts:
-      output: sdk/src/schema.d.ts
+      output: sdk/src/schema.ts
 lint:
   extends:
     - recommended
