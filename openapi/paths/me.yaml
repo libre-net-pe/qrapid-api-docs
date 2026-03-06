@@ -25,16 +25,18 @@ get:
             plan: free
             createdAt: '2026-02-28T12:00:00Z'
     '401':
-      description: Missing or invalid authentication credential.
+      description: >
+        Missing or invalid authentication credential. This endpoint auto-provisions
+        the user on first call and never returns `user_not_provisioned`.
       content:
         application/problem+json:
           schema:
             $ref: ../components/schemas/Problem.yaml
           example:
-            type: 'https://qrapid.io/errors/unauthorized'
+            type: about:blank
             title: Unauthorized
             status: 401
-            detail: A valid Firebase ID token or API key is required.
+            detail: 'auth: unauthenticated request'
 
 patch:
   tags:
@@ -84,13 +86,30 @@ patch:
             status: 400
             detail: The `displayName` field must not exceed 100 characters.
     '401':
-      description: Missing or invalid authentication credential.
+      description: >
+        Unauthorized. Either the token is missing/invalid, or the user account
+        has not been provisioned yet. Check the `code` field to distinguish:
+        - No `code` field → missing or invalid token
+        - `code: user_not_provisioned` → call `GET /me` first, then retry
       content:
         application/problem+json:
           schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token or API key is required.
+            oneOf:
+              - $ref: ../components/schemas/Problem.yaml
+              - $ref: ../components/schemas/UserNotProvisionedError.yaml
+          examples:
+            unauthenticated:
+              summary: Missing or invalid token
+              value:
+                type: about:blank
+                title: Unauthorized
+                status: 401
+                detail: 'auth: unauthenticated request'
+            unprovisioned:
+              summary: Valid token but account not provisioned
+              value:
+                type: about:blank
+                title: Unauthorized
+                status: 401
+                detail: call GET /me to provision your account
+                code: user_not_provisioned

@@ -62,13 +62,30 @@ post:
                 status: 400
                 detail: 'The uploaded file is 3.2 MB, which exceeds the 2 MB limit.'
     '401':
-      description: Missing or invalid Firebase JWT.
+      description: >
+        Unauthorized. Either the token is missing/invalid, or the user account
+        has not been provisioned yet. Check the `code` field to distinguish:
+        - No `code` field → missing or invalid token
+        - `code: user_not_provisioned` → call `GET /me` first, then retry
       content:
         application/problem+json:
           schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+            oneOf:
+              - $ref: ../components/schemas/Problem.yaml
+              - $ref: ../components/schemas/UserNotProvisionedError.yaml
+          examples:
+            unauthenticated:
+              summary: Missing or invalid token
+              value:
+                type: about:blank
+                title: Unauthorized
+                status: 401
+                detail: 'auth: unauthenticated request'
+            unprovisioned:
+              summary: Valid token but account not provisioned
+              value:
+                type: about:blank
+                title: Unauthorized
+                status: 401
+                detail: call GET /me to provision your account
+                code: user_not_provisioned
