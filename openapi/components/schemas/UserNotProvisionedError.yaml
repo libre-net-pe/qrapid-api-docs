@@ -9,10 +9,10 @@ properties:
     example: about:blank
   title:
     type: string
-    example: Unauthorized
+    enum: [Unauthorized]
   status:
     type: integer
-    example: 401
+    enum: [401]
   detail:
     type: string
     example: call GET /me to provision your account

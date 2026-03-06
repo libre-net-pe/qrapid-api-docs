@@ -57,33 +57,7 @@ post:
             status: 400
             detail: 'The `content` field must be a valid absolute URL when `type` is "url".'
     '401':
-      description: >
-        Unauthorized. Either the token is missing/invalid, or the user account
-        has not been provisioned yet. Check the `code` field to distinguish:
-        - No `code` field → missing or invalid token
-        - `code: user_not_provisioned` → call `GET /me` first, then retry
-      content:
-        application/problem+json:
-          schema:
-            oneOf:
-              - $ref: ../components/schemas/Problem.yaml
-              - $ref: ../components/schemas/UserNotProvisionedError.yaml
-          examples:
-            unauthenticated:
-              summary: Missing or invalid token
-              value:
-                type: about:blank
-                title: Unauthorized
-                status: 401
-                detail: 'auth: unauthenticated request'
-            unprovisioned:
-              summary: Valid token but account not provisioned
-              value:
-                type: about:blank
-                title: Unauthorized
-                status: 401
-                detail: call GET /me to provision your account
-                code: user_not_provisioned
+      $ref: ../components/responses/Unauthorized.yaml
 
 get:
   tags:
@@ -129,30 +103,4 @@ get:
           schema:
             $ref: ../components/schemas/PaginatedQrCodes.yaml
     '401':
-      description: >
-        Unauthorized. Either the token is missing/invalid, or the user account
-        has not been provisioned yet. Check the `code` field to distinguish:
-        - No `code` field → missing or invalid token
-        - `code: user_not_provisioned` → call `GET /me` first, then retry
-      content:
-        application/problem+json:
-          schema:
-            oneOf:
-              - $ref: ../components/schemas/Problem.yaml
-              - $ref: ../components/schemas/UserNotProvisionedError.yaml
-          examples:
-            unauthenticated:
-              summary: Missing or invalid token
-              value:
-                type: about:blank
-                title: Unauthorized
-                status: 401
-                detail: 'auth: unauthenticated request'
-            unprovisioned:
-              summary: Valid token but account not provisioned
-              value:
-                type: about:blank
-                title: Unauthorized
-                status: 401
-                detail: call GET /me to provision your account
-                code: user_not_provisioned
+      $ref: ../components/responses/Unauthorized.yaml
