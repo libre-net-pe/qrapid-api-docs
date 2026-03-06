@@ -42,16 +42,7 @@ post:
             status: 400
             detail: The `name` field is required and must not exceed 100 characters.
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '409':
       description: A folder with the same name already exists for this user.
       content:
@@ -99,13 +90,4 @@ get:
           schema:
             $ref: ../components/schemas/PaginatedFolders.yaml
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml

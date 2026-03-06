@@ -31,16 +31,7 @@ get:
             downloadUrl: 'https://cdn.qrapid.io/qr/qr_abc123xyz.png'
             createdAt: '2026-02-18T12:00:00Z'
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '404':
       description: No QR code found with the given ID for the authenticated user.
       content:
@@ -125,16 +116,7 @@ patch:
             status: 400
             detail: No folder with ID fol_abc123 exists in your account.
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '403':
       description: The authenticated user does not own this QR code.
       content:
@@ -171,16 +153,7 @@ delete:
     '204':
       description: QR code deleted successfully. No response body.
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '403':
       description: The authenticated user does not own this QR code.
       content:

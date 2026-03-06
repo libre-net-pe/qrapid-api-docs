@@ -37,16 +37,7 @@ get:
             createdAt: '2026-02-18T12:00:00Z'
             updatedAt: '2026-02-18T12:00:00Z'
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '404':
       description: No dynamic QR code found with the given ID for the authenticated user.
       content:
@@ -125,16 +116,7 @@ patch:
             status: 400
             detail: 'The `destinationUrl` must be a valid absolute URL (http or https).'
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '403':
       description: The authenticated user does not own this dynamic QR code.
       content:
@@ -174,16 +156,7 @@ delete:
     '204':
       description: Dynamic QR code deleted successfully. No response body.
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml
     '403':
       description: The authenticated user does not own this dynamic QR code.
       content:

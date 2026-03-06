@@ -62,13 +62,4 @@ post:
                 status: 400
                 detail: 'The uploaded file is 3.2 MB, which exceeds the 2 MB limit.'
     '401':
-      description: Missing or invalid Firebase JWT.
-      content:
-        application/problem+json:
-          schema:
-            $ref: ../components/schemas/Problem.yaml
-          example:
-            type: 'https://qrapid.io/errors/unauthorized'
-            title: Unauthorized
-            status: 401
-            detail: A valid Firebase ID token is required.
+      $ref: ../components/responses/Unauthorized.yaml

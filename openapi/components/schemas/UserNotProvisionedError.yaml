@@ -1,0 +1,21 @@
+description: >
+  Returned when a valid token is present but the user account has not been
+  provisioned yet. Call GET /me to provision, then retry the request.
+type: object
+required: [type, title, status, detail, code]
+properties:
+  type:
+    type: string
+    example: about:blank
+  title:
+    type: string
+    enum: [Unauthorized]
+  status:
+    type: integer
+    enum: [401]
+  detail:
+    type: string
+    example: call GET /me to provision your account
+  code:
+    type: string
+    enum: [user_not_provisioned]
