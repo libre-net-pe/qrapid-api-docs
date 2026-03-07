@@ -1,16 +1,28 @@
 post:
   tags:
     - Assets
-  summary: Upload a logo
+  summary: Initiate a logo upload
   description: |
-    Uploads an image file to use as a center logo in QR codes. The returned `logoId`
-    can be passed as `branding.logoId` when creating a static or dynamic QR code.
+    Registers a new logo asset and returns a pre-signed PUT URL for uploading the
+    file directly to storage. The returned `logoId` can be passed as
+    `branding.logoId` when creating a static or dynamic QR code.
 
     **Accepted formats:** PNG, JPG, SVG
     **Maximum file size:** 2 MB
 
-    Logos are scoped to the authenticated user and can be reused across multiple QR codes.
-    The server scales the logo automatically to occupy at most 20% of the QR code area.
+    ## Upload flow
+
+    1. Call `POST /assets/logo` with the filename and content type.
+    2. Receive a `201` response containing `logoId` and a short-lived `uploadUrl`.
+    3. `PUT <uploadUrl>` with the raw file bytes as the request body and a
+       `Content-Type` header matching the value you provided. Do **not** use
+       `multipart/form-data` — send the raw bytes directly.
+    4. Once the upload is complete, call `GET /assets/logo/{logoId}` to obtain a
+       fresh pre-signed URL for displaying or verifying the image.
+
+    Logos are scoped to the authenticated user and can be reused across multiple
+    QR codes. The server scales the logo automatically to occupy at most 20% of
+    the QR code area.
   operationId: uploadLogo
   security:
     - firebase_jwt: []
@@ -18,19 +30,15 @@ post:
   requestBody:
     required: true
     content:
-      multipart/form-data:
+      application/json:
         schema:
-          type: object
-          required:
-            - file
-          properties:
-            file:
-              description: 'The logo image file to upload. Accepted formats: PNG, JPG, SVG. Maximum size: 2 MB.'
-              type: string
-              format: binary
+          $ref: ../components/schemas/LogoCreateRequest.yaml
+        example:
+          filename: company-logo.png
+          contentType: image/png
   responses:
     '201':
-      description: Logo uploaded successfully.
+      description: Logo record created. Use `uploadUrl` to upload the file directly to storage.
       content:
         application/json:
           schema:
@@ -38,28 +46,22 @@ post:
           example:
             logoId: logo_xyz789
             filename: company-logo.png
-            previewUrl: 'https://cdn.qrapid.io/logos/logo_xyz789.png'
+            uploadUrl: 'https://storage.qrapid.io/logos/logo_xyz789.png?X-Amz-Signature=abc123'
+            expiresAt: '2026-02-18T12:15:00Z'
             createdAt: '2026-02-18T12:00:00Z'
     '400':
-      description: Invalid file (unsupported format, file too large, or no file provided).
+      description: Invalid request (unsupported content type or missing required fields).
       content:
         application/problem+json:
           schema:
             $ref: ../components/schemas/Problem.yaml
           examples:
-            unsupported_format:
-              summary: Unsupported file format
+            unsupported_content_type:
+              summary: Unsupported content type
               value:
                 type: 'https://qrapid.io/errors/unsupported-file-format'
                 title: Unsupported file format
                 status: 400
-                detail: 'Only PNG, JPG, and SVG files are accepted. Received: image/gif.'
-            file_too_large:
-              summary: File exceeds size limit
-              value:
-                type: 'https://qrapid.io/errors/file-too-large'
-                title: File too large
-                status: 400
-                detail: 'The uploaded file is 3.2 MB, which exceeds the 2 MB limit.'
+                detail: 'Only image/png, image/jpeg, and image/svg+xml are accepted. Received: image/gif.'
     '401':
       $ref: ../components/responses/Unauthorized.yaml

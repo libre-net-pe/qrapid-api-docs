@@ -80,6 +80,8 @@ paths:
     $ref: 'paths/dynamic-qr-codes@{id}.yaml'
   /assets/logo:
     $ref: paths/assets-logo.yaml
+  '/assets/logo/{logoId}':
+    $ref: 'paths/assets-logo@{logoId}.yaml'
   /folders:
     $ref: paths/folders.yaml
   '/folders/{id}':
