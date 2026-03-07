@@ -1,0 +1,31 @@
+description: Paginated list of logo assets.
+type: object
+required:
+  - data
+  - pagination
+properties:
+  data:
+    description: Array of logo objects for the current page.
+    type: array
+    items:
+      $ref: ./LogoSummary.yaml
+  pagination:
+    description: Pagination metadata.
+    type: object
+    required:
+      - page
+      - limit
+      - total
+    properties:
+      page:
+        description: The current page number (1-based).
+        type: integer
+        example: 1
+      limit:
+        description: Maximum number of items returned per page.
+        type: integer
+        example: 20
+      total:
+        description: Total number of logos owned by the authenticated user.
+        type: integer
+        example: 3
