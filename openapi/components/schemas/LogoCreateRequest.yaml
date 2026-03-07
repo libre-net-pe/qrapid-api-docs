@@ -1,0 +1,18 @@
+description: Request body for initiating a logo upload via pre-signed URL.
+type: object
+required:
+  - filename
+  - contentType
+properties:
+  filename:
+    description: 'Original filename of the logo image. Accepted formats: PNG, JPG, SVG.'
+    type: string
+    example: company-logo.png
+  contentType:
+    description: 'MIME type of the logo image. Must be one of: `image/png`, `image/jpeg`, `image/svg+xml`.'
+    type: string
+    enum:
+      - image/png
+      - image/jpeg
+      - image/svg+xml
+    example: image/png

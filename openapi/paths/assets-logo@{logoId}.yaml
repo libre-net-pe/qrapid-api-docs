@@ -1,0 +1,46 @@
+get:
+  tags:
+    - Assets
+  summary: Get a logo download URL
+  description: |
+    Returns a fresh pre-signed GET URL for downloading or displaying a previously
+    uploaded logo. Because pre-signed URLs are short-lived, call this endpoint each
+    time you need to display the logo rather than caching the URL.
+  operationId: getLogo
+  security:
+    - firebase_jwt: []
+    - api_key: []
+  parameters:
+    - name: logoId
+      in: path
+      required: true
+      description: The unique identifier of the logo, as returned by `POST /assets/logo`.
+      schema:
+        type: string
+        example: logo_xyz789
+  responses:
+    '200':
+      description: Logo found. Use `downloadUrl` to display or download the image.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/LogoDownload.yaml
+          example:
+            logoId: logo_xyz789
+            filename: company-logo.png
+            downloadUrl: 'https://storage.qrapid.io/logos/logo_xyz789.png?X-Amz-Signature=def456'
+            expiresAt: '2026-02-18T12:15:00Z'
+            createdAt: '2026-02-18T12:00:00Z'
+    '401':
+      $ref: ../components/responses/Unauthorized.yaml
+    '404':
+      description: Logo not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../components/schemas/Problem.yaml
+          example:
+            type: 'https://qrapid.io/errors/not-found'
+            title: Not found
+            status: 404
+            detail: 'No logo found with ID logo_xyz789.'

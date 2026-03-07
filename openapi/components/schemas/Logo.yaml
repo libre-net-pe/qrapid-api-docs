@@ -1,9 +1,10 @@
-description: A user-uploaded logo asset that can be embedded in QR codes as a center image.
+description: Response returned after initiating a logo upload. Contains a pre-signed PUT URL the client uses to upload the file directly to storage.
 type: object
 required:
   - logoId
   - filename
-  - previewUrl
+  - uploadUrl
+  - expiresAt
   - createdAt
 properties:
   logoId:
@@ -11,16 +12,21 @@ properties:
     type: string
     example: logo_xyz789
   filename:
-    description: Original filename of the uploaded image.
+    description: Original filename provided in the upload request.
     type: string
     example: company-logo.png
-  previewUrl:
-    description: CDN URL to preview the uploaded logo image.
+  uploadUrl:
+    description: Pre-signed PUT URL to upload the file directly to storage. Valid for the duration indicated by `expiresAt`. Send the raw file bytes as the request body with the `Content-Type` matching the value provided in the upload request.
     type: string
     format: uri
-    example: 'https://cdn.qrapid.io/logos/logo_xyz789.png'
+    example: 'https://storage.qrapid.io/logos/logo_xyz789.png?X-Amz-Signature=abc123'
+  expiresAt:
+    description: ISO 8601 timestamp indicating when the `uploadUrl` expires. Upload must be completed before this time.
+    type: string
+    format: date-time
+    example: '2026-02-18T12:15:00Z'
   createdAt:
-    description: ISO 8601 timestamp of when the logo was uploaded.
+    description: ISO 8601 timestamp of when the logo record was created.
     type: string
     format: date-time
     example: '2026-02-18T12:00:00Z'
