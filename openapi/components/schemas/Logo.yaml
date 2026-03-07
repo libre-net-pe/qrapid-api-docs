@@ -1,10 +1,9 @@
-description: Response returned after initiating a logo upload. Contains a pre-signed POST URL and signed form fields the client uses to upload the file directly to storage.
+description: Response returned after initiating a logo upload. Contains a pre-signed PUT URL the client uses to upload the file directly to storage.
 type: object
 required:
   - logoId
   - filename
   - uploadUrl
-  - uploadFields
   - expiresAt
   - createdAt
 properties:
@@ -17,25 +16,14 @@ properties:
     type: string
     example: company-logo.png
   uploadUrl:
-    description: Pre-signed POST URL to upload the file directly to storage. Valid for the duration indicated by `expiresAt`. Submit a `multipart/form-data` POST request with all `uploadFields` entries as form fields (before the file) and the file bytes as the `file` field.
+    description: >
+      Pre-signed PUT URL to upload the file directly to storage.
+      Valid for the duration indicated by `expiresAt`.
+      Send a PUT request with the raw file bytes as the body and
+      a `Content-Type` header matching the value provided in the upload request.
     type: string
     format: uri
-    example: 'https://storage.qrapid.io/logos/logo_xyz789.png'
-  uploadFields:
-    type: object
-    additionalProperties:
-      type: string
-    description: >
-      Key-value pairs that must be included as form fields when uploading
-      the file to S3. Submit as multipart/form-data with these fields
-      appearing before the file bytes.
-    example:
-      key: logos/logo_01J...
-      X-Amz-Algorithm: AWS4-HMAC-SHA256
-      X-Amz-Credential: AKIA.../20260307/us-east-1/s3/aws4_request
-      X-Amz-Date: 20260307T000000Z
-      X-Amz-Signature: abc123...
-      policy: eyJleH...
+    example: 'https://storage.qrapid.io/logos/logo_xyz789.png?X-Amz-Signature=abc123'
   expiresAt:
     description: ISO 8601 timestamp indicating when the `uploadUrl` expires. Upload must be completed before this time.
     type: string
