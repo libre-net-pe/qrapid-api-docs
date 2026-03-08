@@ -65,3 +65,52 @@ post:
                 detail: 'Only image/png, image/jpeg, and image/svg+xml are accepted. Received: image/gif.'
     '401':
       $ref: ../components/responses/Unauthorized.yaml
+
+get:
+  tags:
+    - Assets
+  summary: List logos
+  description: Returns a paginated list of all logo assets owned by the authenticated user, ordered by `createdAt` descending. To obtain a download URL for a specific logo, call `GET /assets/logo/{logoId}`.
+  operationId: listLogos
+  security:
+    - firebase_jwt: []
+    - api_key: []
+  parameters:
+    - name: page
+      in: query
+      description: Page number to retrieve (1-based).
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 1
+    - name: limit
+      in: query
+      description: Number of items per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 20
+  responses:
+    '200':
+      description: Paginated list of logos.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/PaginatedLogos.yaml
+          example:
+            data:
+              - logoId: logo_xyz789
+                filename: company-logo.png
+                createdAt: '2026-02-18T12:00:00Z'
+              - logoId: logo_abc123
+                filename: brand-mark.svg
+                createdAt: '2026-01-10T09:30:00Z'
+            pagination:
+              page: 1
+              limit: 20
+              total: 2
+    '401':
+      $ref: ../components/responses/Unauthorized.yaml
